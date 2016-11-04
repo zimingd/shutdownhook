@@ -5,31 +5,12 @@ package some.name.idk.shutdownhook;
  */
 public class App 
 {
-    private static volatile boolean shutDownSignalReceived = false;
+    private ShutdownHook shutdownHook;
 
     public static void main( String[] args ) {	
     	App app = new App();
         System.out.println( "Hello World!" );
         final Thread mainThread = Thread.currentThread();
-        
-        Thread shutdownHook = new Thread("shutdownHook"){
-        	@Override
-        	public void run(){
-        		System.out.println( "shutdownHook run()" );
-        		shutDownSignalReceived = true;
-        		
-				try {
-					mainThread.interrupt();
-					mainThread.join();
-				} catch (InterruptedException e) {
-					System.out.println( "Interrupted" );
-				}
-				
-        		System.out.println( "End of shtudown hook" );
-        	}
-        };
-        Runtime.getRuntime().addShutdownHook(shutdownHook);
-    	shutDownSignalReceived=false;
 
 		app.execute();
 	
@@ -37,12 +18,12 @@ public class App
     }
     
     public App(){
-
+        this.shutdownHook = new ShutdownHook(Thread.currentThread());
     }
     
     public void execute(){
     	
-    	while(!shutDownSignalReceived){
+    	while(!shutdownHook.shouldShutDown()){
     		System.out.println("I am sleep");
     		
     		try {
