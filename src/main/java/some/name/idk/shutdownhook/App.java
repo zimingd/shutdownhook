@@ -1,5 +1,4 @@
 package some.name.idk.shutdownhook;
-
 /**
  * Hello world!
  *
